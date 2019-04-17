@@ -1,191 +1,371 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <string.h>
+#include "utn.h"
 
-/**
- * \brief Solicita un número al usuario y devuelve el resultado
- * \param mensaje Es el mensaje a ser mostrado
- * \return El número ingresado por el usuario
- *
- */
-float getFloat(char mensaje[])
-{
-    float auxiliar;
-    printf("%s",mensaje);
-    scanf("%f",&auxiliar);
-    return auxiliar;
-}
+#define MAX_DIGIT_OPTION 2
+#define MIN_DIGIT_OPTION 1
+#define TRUE 1
+#define FALSE 0
+#define EDAD_MAX_DIGIT 3
+#define EDAD_MIN_DIGIT 1
 
 
 /**
- * \brief Solicita un número al usuario y devuelve el resultado
- * \param mensaje Es el mensaje a ser mostrado
- * \return El número ingresado por el usuario
- *
- */
-int getInt(char mensaje[])
+  *\brief Ordena el array de enteros.
+  *\param La cantidad de elementos que tiene el array.
+  *\param El array a ordenar.
+  *\return El array ordenado de menor a mayor.
+**/
+int ordenamientoArrayEnteros(int limite,int vec[])
 {
-    int auxiliar;
-    printf("%s",mensaje);
-    scanf("%d",&auxiliar);
-    return auxiliar;
-}
-
-
-/**
- * \brief Solicita un caracter al usuario y devuelve el resultado
- * \param mensaje Es el mensaje a ser mostrado
- * \return El caracter ingresado por el usuario
- *
- */
-char getChar(char mensaje[])
-{
-    char auxiliar;
-    printf("%s",mensaje);
-    fflush(stdin);
-    scanf("%c",&auxiliar);
-    return auxiliar;
-}
-/**
- * \brief Genera un número aleatorio
- * \param desde Número aleatorio mínimo
- * \param hasta Número aleatorio máximo
- * \param iniciar Indica si se trata del primer número solicitado 1 indica que si
- * \return retorna el número aleatorio generado
- *
- */
-char getNumeroAleatorio(int desde , int hasta, int iniciar)
-{
-    if(iniciar)
-        srand (time(NULL));
-    return desde + (rand() % (hasta + 1 - desde)) ;
-}
-
-
-/**
- * \brief Verifica si el valor recibido es numérico
- * \param str Array con la cadena a ser analizada
- * \return 1 si es númerico y 0 si no lo es
- *
- */
-
-int esNumerico(char str[])
-{
-   int i=0;
-   while(str[i] != '\0')
+    int retorno = -1;
+    int i,j,aux;
+    for(i=0;i<limite-1;i++)
    {
-       if(str[i] < '0' || str[i] > '9')
-           return 0;
-       i++;
-   }
-   return 1;
-}
-/**
- * \brief Verifica si el valor recibido contiene solo letras
- * \param str Array con la cadena a ser analizada
- * \return 1 si contiene solo ' ' y letras y 0 si no lo es
- *
- */
-int esSoloLetras(char str[])
-{
-   int i=0;
-   while(str[i] != '\0')
-   {
-       if((str[i] != ' ') && (str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z'))
-           return 0;
-       i++;
-   }
-   return 1;
-}
-
-
-/**
- * \brief Verifica si el valor recibido contiene solo letras y números
- * \param str Array con la cadena a ser analizada
- * \return 1 si contiene solo espacio o letras y números, y 0 si no lo es
- *
- */
-int esAlfaNumerico(char str[])
-{
-   int i=0;
-   while(str[i] != '\0')
-   {
-       if((str[i] != ' ') && (str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z') && (str[i] < '0' || str[i] > '9'))
-           return 0;
-       i++;
-   }
-   return 1;
-}
-
-
-/**
- * \brief Verifica si el valor recibido contiene solo números, + y -
- * \param str Array con la cadena a ser analizada
- * \return 1 si contiene solo numeros, espacios y un guion.
- *
- */
-int esTelefono(char str[])
-{
-   int i=0;
-   int contadorGuiones=0;
-   while(str[i] != '\0')
-   {
-       if((str[i] != ' ') && (str[i] != '-') && (str[i] < '0' || str[i] > '9'))
-           return 0;
-       if(str[i] == '-')
-            contadorGuiones++;
-       i++;
-   }
-   if(contadorGuiones==1) // debe tener un guion
-        return 1;
-
-    return 0;
-}
-
-/**
- * \brief Solicita un texto al usuario y lo devuelve
- * \param mensaje Es el mensaje a ser mostrado
- * \param input Array donde se cargará el texto ingresado
- * \return void
- */
-void getString(char mensaje[],char input[])
-{
-    printf("%s",mensaje);
-    scanf ("%s", input);
-}
-
-/**
- * \brief Solicita un texto al usuario y lo devuelve
- * \param mensaje Es el mensaje a ser mostrado
- * \param input Array donde se cargará el texto ingresado
- * \return 1 si el texto contiene solo letras
- */
-int getStringLetras(char mensaje[],char input[])
-{
-    char aux[256];
-    getString(mensaje,aux);
-    if(esSoloLetras(aux))
-    {
-        strcpy(input,aux);
-        return 1;
+         for(j=i+1;j<limite;j++)
+       {
+            if(vec[i]>vec[j])
+          {
+            aux=vec[i];
+            vec[i]=vec[j];
+            vec[j]=aux;
+            retorno = 0;
+          }
+       }
     }
-    return 0;
+    return retorno;
 }
 
-/**
- * \brief Solicita un texto numérico al usuario y lo devuelve
- * \param mensaje Es el mensaje a ser mostrado
- * \param input Array donde se cargará el texto ingresado
- * \return 1 si el texto contiene solo números
- */
-int getStringNumeros(char mensaje[],char input[])
+int getString(char *msg,
+              char *msgError,
+              int minimo,
+              int maximo,
+              int reintentos,
+              char *resultado)
 {
-    char aux[256];
-    getString(mensaje,aux);
-    if(esNumerico(aux))
-    {
-        strcpy(input,aux);
-        return 1;
-    }
-    return 0;
+    int retorno = -1;
+    char buffer[4096];
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo<maximo &&
+       reintentos >= 0&&
+       resultado != NULL)
+       {
+            do
+            {
+                printf("%s",msg);
+                fgets(buffer,sizeof(buffer),stdin);
+                buffer[strlen(buffer)-1] = '\0';
+                if(strlen(buffer)>= minimo && strlen(buffer) < maximo)
+                {
+                    strncpy(resultado,buffer,maximo);
+                    retorno = 0;
+                    break;
+                }
+                reintentos--;
+                printf("%s",msgError);
+
+            }while(reintentos >= 0);
+       }
+    return retorno;
+
 }
+int getName(char *msg,
+            char *msgError,
+            int minimo,
+            int maximo,
+            int reintentos,
+            char *resultado)
+{
+    char buffer[4096];
+    int retorno = -1;
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo<maximo &&
+       reintentos >= 0&&
+       resultado != NULL)
+    {
+        if(!getString(msg,msgError,minimo,maximo,reintentos,buffer))
+        {
+            if(isValidName(buffer))
+            {
+                strncpy(resultado,buffer,maximo);
+                retorno = 0;
+            }
+        }
+    }
+    return retorno;
+}
+int isValidName(char str[])
+{
+
+    int retorno = TRUE;
+    int i=0;
+    while(str[i] != '\0')
+    {
+        if(str[i] != ' ' && (str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z'))
+        {
+            return FALSE;
+        }
+        i++;
+    }
+    return retorno;
+
+}
+
+int getNumber(char *msg,char *msgError,int minimo,int maximo,int reintentos,char *resultado)
+{
+    int retorno = -1;
+    char buffer[4096];
+    int bufferInt;
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo < maximo &&
+       reintentos >= 0 &&
+       resultado != NULL)
+    {
+        if(!getString(msg,msgError,minimo,maximo,reintentos,buffer))
+        {
+           if(isValidNumber(buffer))
+           {
+              bufferInt = atoi(buffer);
+              if(isValidRange(minimo,maximo,bufferInt))
+              {
+                 strncpy(resultado,buffer,MAX_DIGIT_OPTION);
+                 retorno = 0;
+              }
+
+           }
+        }
+    }
+    return retorno;
+
+}
+int isValidNumber(char strNumber[])
+{
+    int retorno = TRUE;
+    int i = 0;
+    while(strNumber[i] != '\0')
+    {
+        if(strNumber[i] < '0' || strNumber[i] > '9')
+        {
+            return FALSE;
+        }
+        i++;
+    }
+    return retorno;
+}
+
+int isValidRange(int minimo,int maximo,int number)
+{
+    if(number >= minimo && number <= maximo)
+    {
+        return TRUE;
+    }
+    return FALSE;
+
+}
+
+
+int getInt(char *msg,char *msgError,int minimo,int maximo,int reintentos,int *resultado)
+
+{
+    int retorno = -1;
+    int buffer;
+
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo < maximo &&
+       reintentos >= 0 &&
+       resultado != NULL)
+    {
+       do
+       {
+            printf("%s",msg);
+            scanf("%d",&buffer);
+            if(isValidNumberInt(buffer))
+            {
+                if(isValidRange(minimo,maximo,buffer))
+                {
+                *resultado = buffer;
+                return 0;
+                break;
+                }
+            }
+            printf("%s",msgError);
+            reintentos--;
+       }while(reintentos >=0);
+    }
+
+    return retorno;
+
+}
+
+int isValidNumberInt(int str)
+{
+   int retorno = TRUE;
+    int i=0;
+    while(str != '\0')
+    {
+        if(!(str != ' ' && (str < 'a' || str > 'z') && (str < 'A' || str > 'Z')))
+        {
+            return FALSE;
+        }
+        i++;
+    }
+    return retorno;
+}
+
+int buscarEspacioVacio(int str[],int limite,int espacio_Vacio)
+
+{
+    int i;
+    for(i=0;i<limite;i++)
+    {
+        if(str[i] == -1)
+        {
+
+            espacio_Vacio = i;
+            str[i] = 1;
+            return TRUE;
+            break;
+        }
+    }
+    return FALSE;
+}
+
+int getEdad(char *msg,char *msgError,int minimo,int maximo,int reintentos,char *resultado)
+{
+    int retorno = -1;
+    char buffer[4096];
+    int bufferInt;
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo < maximo &&
+       reintentos >= 0 &&
+       resultado != NULL)
+    {
+        if(!getString(msg,msgError,EDAD_MIN_DIGIT,EDAD_MAX_DIGIT,reintentos,buffer))
+        {
+           if(isValidNumber(buffer))
+           {
+              bufferInt = atoi(buffer);
+              if(isValidRange(minimo,maximo,bufferInt))
+              {
+                 strncpy(resultado,buffer,MAX_DIGIT_OPTION);
+                 retorno = 0;
+              }
+
+           }
+        }
+    }
+    return retorno;
+
+}
+
+int getOption(char *msg,char *msgError,int minimo,int maximo,int reintentos,char *resultado)
+{
+    int retorno = -1;
+    char buffer[4096];
+    int bufferInt;
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo < maximo &&
+       reintentos >= 0 &&
+       resultado != NULL)
+    {
+        if(!getString(msg,msgError,MIN_DIGIT_OPTION,MAX_DIGIT_OPTION,reintentos,buffer))
+        {
+           if(isValidNumber(buffer))
+           {
+              bufferInt = atoi(buffer);
+              if(isValidRange(minimo,maximo,bufferInt))
+              {
+                 strncpy(resultado,buffer,MAX_DIGIT_OPTION);
+                 retorno = 0;
+              }
+
+           }
+        }
+    }
+    return retorno;
+
+}
+
+int getLegajo(char *msg,char *msgError,int minimo,int maximo,int reintentos,char *resultado)
+{
+    int retorno = -1;
+    char buffer[4096];
+    int bufferInt;
+    if(msg != NULL &&
+       msgError != NULL &&
+       minimo < maximo &&
+       reintentos >= 0 &&
+       resultado != NULL)
+    {
+        if(!getString(msg,msgError,minimo,maximo,reintentos,buffer))
+        {
+           if(isValidNumber(buffer))
+           {
+              bufferInt = atoi(buffer);
+              if(isValidRange(minimo,maximo,bufferInt))
+              {
+                 strncpy(resultado,buffer,MAX_DIGIT_OPTION);
+                 retorno = 0;
+              }
+
+           }
+        }
+    }
+    return retorno;
+
+}
+
+int isValidLegajo(char numeroLegajo[], int str[],int limite)
+{
+    int i;
+    int retorno = TRUE;
+    for(i=0;i<limite;i++)
+    {
+        if(numeroLegajo == str[i])
+        {
+            retorno = FALSE;
+        }
+    }
+    return retorno;
+}
+
+int bajaLegajo(int str[],char compare,int limite,int resultado)
+{
+  //int aux;
+  //aux = atoi(compare);
+  int i;
+  int aux;
+  aux = atoi(compare);
+  for(i=0;i<limite;i++)
+  {
+
+      if(str[i] == aux)
+      {
+          resultado = i;
+          return 1;
+          break;
+      }
+  }
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
